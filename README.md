@@ -45,4 +45,4 @@ The plugin will automatically start "working" in the background, no action
 required.
 
 #### License
-[MIT](LICENSE.md)
+[MIT](LICENSE)
