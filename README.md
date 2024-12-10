@@ -8,6 +8,10 @@ A simple tmux plugin for managing a "scratch" session that allows easy attachmen
   - If the `scratch` session exists, it detaches the current client.
   - If the `scratch` session doesn't exist, it creates and attaches to it.
   - Provides a popup when creating the `scratch` session for easy interaction.
+- `prefix-n` to create or attach to a new tmux session from the `current_pane_path`
+  - If a session named using `current_pane_path` exists, it detaches the current client and attaches to it
+  - If a session named using `current_pane_path` doesn't exist, it creates and attaches to it.
+  - Provide a way to quickly create a new session (or `themastersheep/tmux-workspaces`) from the `scratch` popup
 
 #### Dependencies
 
