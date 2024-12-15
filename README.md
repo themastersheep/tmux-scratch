@@ -1,6 +1,6 @@
 # tmux-scratch
 
-A simple tmux plugin for managing a "scratch" session that allows easy attachment or creation of a scratch session using a keyboard shortcut.
+A simple tmux plugin for managing a "scratch" session that allows easy attachment or creation of a scratch session in a tmux popup using a keyboard shortcut without needing to switch out of what you are doing.
 
 #### Key binding(s)
 
