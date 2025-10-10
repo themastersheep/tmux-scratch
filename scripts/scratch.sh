@@ -13,10 +13,33 @@ function toggle() {
 
     if _in_a_scratch_session; then
         tmux detach-client
-    else
-        # Display a popup and start (or attach) the 'scratch' session
-        tmux display-popup -b rounded -E "TERM=xterm tmux new-session -A -s scratch"
+        return
     fi
+
+    # capture current session; session context changes after call to create new session
+    local current_session=$(tmux display-message -p '#S')
+
+    # ensure we have a scratch session
+    local TARGET_SESSION="scratch"
+    tmux has-session -t "$TARGET_SESSION" 2>/dev/null || tmux new-session -d -s "$TARGET_SESSION" -n "global"
+
+    if [ "$1" == "global" ]; then
+        tmux display-popup -E "tmux attach-session -t '$TARGET_SESSION:global';"
+        return
+    fi
+
+    local window=$(tmux list-windows -t "$current_session:" -F '#{window_name}' | grep '^scratch_' | head -n 1)
+    if [ -z "$window" ]; then
+        window="scratch_$(date +%s)"
+        tmux new-window -d -n "$window" -t "$current_session:"
+    fi
+
+    # Link the window to the scratch session. It will become the current window there.
+    tmux link-window -s "$current_session:$window" -t "$TARGET_SESSION:-"
+
+    # Display popup. When the popup is closed (attach-session exits),
+    # unlink the window from the scratch session.
+    tmux display-popup -E "tmux attach-session -t '$TARGET_SESSION'; tmux unlink-window -t '$TARGET_SESSION:$window'"
 }
 
 function new_session() {
@@ -40,6 +63,10 @@ case "$1" in
 
     toggle)
         toggle
+        ;;
+
+    toggle_global)
+        toggle "global"
         ;;
 
     new_session)
