@@ -38,8 +38,8 @@ function toggle() {
     tmux link-window -s "$current_session:$window" -t "$TARGET_SESSION:-"
 
     # Display popup. When the popup is closed (attach-session exits),
-    # unlink the window from the scratch session.
-    tmux display-popup -E "tmux attach-session -t '$TARGET_SESSION'; tmux unlink-window -t '$TARGET_SESSION:$window'"
+     # unlink the window from the scratch session (silence errors if the window was killed)
+    tmux display-popup -E "tmux attach-session -t '$TARGET_SESSION'; tmux unlink-window -t '$TARGET_SESSION:$window' 2>/dev/null || true"
 }
 
 function new_session() {
