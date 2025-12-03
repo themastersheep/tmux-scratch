@@ -21,7 +21,15 @@ function toggle() {
 
     # ensure we have a scratch session
     local TARGET_SESSION="scratch"
-    tmux has-session -t "$TARGET_SESSION" 2>/dev/null || tmux new-session -d -s "$TARGET_SESSION" -n "global"
+    if ! tmux has-session -t "$TARGET_SESSION" 2>/dev/null; then
+        tmux new-session -d -s "$TARGET_SESSION" -n "global"
+        # Configure custom status line for scratch session - show only "global" or "local"
+        tmux set-option -t "$TARGET_SESSION" status on
+        tmux set-option -t "$TARGET_SESSION" status-style "bg=default,fg=default"
+        tmux set-option -t "$TARGET_SESSION" status-format[0] "#[fg=colour6]tmux-scratch#[fg=default](#{?#{==:#{window_name},global},global,local})"
+        tmux set-option -t "$TARGET_SESSION" status-left ""
+        tmux set-option -t "$TARGET_SESSION" status-right ""
+    fi
 
     if [ "$1" == "global" ]; then
         tmux display-popup -E "tmux attach-session -t '$TARGET_SESSION:global';"
