@@ -6,6 +6,7 @@ A simple tmux plugin for managing "scratch" windows in a tmux popup.
 
 - **Per-session scratch window**: A scratch window that is created for the current session and persists in the background. It can be quickly accessed via a popup.
 - **Global scratch window**: A single, persistent scratch window that is shared across all sessions and can also be accessed via a popup.
+- **Status line indicator**: The popup displays a transparent status line showing whether you're in the global or local scratch window.
 - **Quick session switching**: A key binding to quickly create or attach to a new tmux session from the current pane's path.
 
 #### Key Bindings
@@ -51,7 +52,7 @@ tmux source-file ~/.tmux.conf
 
 #### Configuration
 
-You can configure the key bindings by adding the following to your `.tmux.conf` file:
+You can configure the key bindings and global scratch directory by adding the following to your `.tmux.conf` file:
 
 - `@tmux_scratch_toggle_bind`
   - Description: Key binding to toggle the per-session scratch window.
@@ -75,6 +76,14 @@ You can configure the key bindings by adding the following to your `.tmux.conf` 
   - Example:
     ```tmux
     set -g @tmux_scratch_new_session_bind "N"
+    ```
+
+- `@tmux_scratch_global_dir`
+  - Description: Starting directory for the global scratch window.
+  - Default: `$HOME`
+  - Example:
+    ```tmux
+    set -g @tmux_scratch_global_dir "/tmp"
     ```
 
 #### License
