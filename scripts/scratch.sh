@@ -22,7 +22,14 @@ function toggle() {
     # ensure we have a scratch session
     local TARGET_SESSION="scratch"
     if ! tmux has-session -t "$TARGET_SESSION" 2>/dev/null; then
-        tmux new-session -d -s "$TARGET_SESSION" -n "global"
+        
+        local global_dir=$(tmux show-options -gqv "@tmux_scratch_global_dir")
+        if [ -z "$global_dir" ]; then
+            global_dir="$HOME"
+        fi
+        
+        tmux new-session -d -s "$TARGET_SESSION" -n "global" -c "$global_dir"
+
         # Configure custom status line for scratch session - show only "global" or "local"
         tmux set-option -t "$TARGET_SESSION" status on
         tmux set-option -t "$TARGET_SESSION" status-style "bg=default,fg=default"
