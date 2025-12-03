@@ -20,26 +20,26 @@ function toggle() {
     local current_session=$(tmux display-message -p '#S')
 
     # ensure we have a scratch session
-    local TARGET_SESSION="scratch"
-    if ! tmux has-session -t "$TARGET_SESSION" 2>/dev/null; then
+    local target_session="scratch"
+    if ! tmux has-session -t "$target_session" 2>/dev/null; then
         
         local global_dir=$(tmux show-options -gqv "@tmux_scratch_global_dir")
         if [ -z "$global_dir" ]; then
             global_dir="$HOME"
         fi
         
-        tmux new-session -d -s "$TARGET_SESSION" -n "global" -c "$global_dir"
+        tmux new-session -d -s "$target_session" -n "global" -c "$global_dir"
 
         # Configure custom status line for scratch session - show only "global" or "local"
-        tmux set-option -t "$TARGET_SESSION" status on
-        tmux set-option -t "$TARGET_SESSION" status-style "bg=default,fg=default"
-        tmux set-option -t "$TARGET_SESSION" status-format[0] "#[fg=colour6]tmux-scratch#[fg=default](#{?#{==:#{window_name},global},global,local})"
-        tmux set-option -t "$TARGET_SESSION" status-left ""
-        tmux set-option -t "$TARGET_SESSION" status-right ""
+        tmux set-option -t "$target_session" status on
+        tmux set-option -t "$target_session" status-style "bg=default,fg=default"
+        tmux set-option -t "$target_session" status-format[0] "#[fg=colour6]tmux-scratch#[fg=default](#{?#{==:#{window_name},global},global,local})"
+        tmux set-option -t "$target_session" status-left ""
+        tmux set-option -t "$target_session" status-right ""
     fi
 
     if [ "$1" == "global" ]; then
-        tmux display-popup -E "tmux attach-session -t '$TARGET_SESSION:global';"
+        tmux display-popup -E "tmux attach-session -t '$target_session:global';"
         return
     fi
 
@@ -50,11 +50,11 @@ function toggle() {
     fi
 
     # Link the window to the scratch session. It will become the current window there.
-    tmux link-window -s "$current_session:$window" -t "$TARGET_SESSION:-"
+    tmux link-window -s "$current_session:$window" -t "$target_session:-"
 
     # Display popup. When the popup is closed (attach-session exits),
-     # unlink the window from the scratch session (silence errors if the window was killed)
-    tmux display-popup -E "tmux attach-session -t '$TARGET_SESSION'; tmux unlink-window -t '$TARGET_SESSION:$window' 2>/dev/null || true"
+    # unlink the window from the scratch session (silence errors if the window was killed)
+    tmux display-popup -E "tmux attach-session -t '$target_session'; tmux unlink-window -t '$target_session:$window' 2>/dev/null || true"
 }
 
 function new_session() {
