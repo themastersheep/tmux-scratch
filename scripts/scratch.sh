@@ -30,12 +30,10 @@ function toggle() {
         
         tmux new-session -d -s "$target_session" -n "global" -c "$global_dir"
 
-        # Configure custom status line for scratch session - show only "global" or "local"
+        # Configure custom status line for scratch session - show only "global" or "local" on the right
         tmux set-option -t "$target_session" status on
         tmux set-option -t "$target_session" status-style "bg=default,fg=default"
-        tmux set-option -t "$target_session" status-format[0] "#[fg=colour6]tmux-scratch#[fg=default](#{?#{==:#{window_name},global},global,local})"
-        tmux set-option -t "$target_session" status-left ""
-        tmux set-option -t "$target_session" status-right ""
+        tmux set-option -t "$target_session" status-format[0] "#[align=right]#[fg=colour6]tmux-scratch#[fg=default](#{?#{==:#{window_name},global},global,local})"
     fi
 
     if [ "$1" == "global" ]; then
