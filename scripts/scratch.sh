@@ -22,12 +22,12 @@ function toggle() {
     # ensure we have a scratch session
     local target_session="scratch"
     if ! tmux has-session -t "$target_session" 2>/dev/null; then
-        
+
         local global_dir=$(tmux show-options -gqv "@tmux_scratch_global_dir")
         if [ -z "$global_dir" ]; then
             global_dir="$HOME"
         fi
-        
+
         tmux new-session -d -s "$target_session" -n "global" -c "$global_dir"
 
         # Configure custom status line for scratch session - show only "global" or "local" on the right
@@ -47,12 +47,19 @@ function toggle() {
         tmux new-window -d -n "$window" -t "$current_session:"
     fi
 
+    # Capture the window's stable, server-unique ID. Linked copies share this
+    # ID, so unlinking by ID later survives the window being renamed, renumbered,
+    # or the base-index differing across machines (where a name/index target can miss).
+    local window_id=$(tmux display-message -p -t "$current_session:$window" '#{window_id}')
+
     # Link the window to the scratch session. It will become the current window there.
-    tmux link-window -s "$current_session:$window" -t "$target_session:-"
+    tmux link-window -s "$current_session:$window" -t "$target_session:"
 
     # Display popup. When the popup is closed (attach-session exits),
-    # unlink the window from the scratch session (silence errors if the window was killed)
-    tmux display-popup -E "tmux attach-session -t '$target_session'; tmux unlink-window -t '$target_session:$window' 2>/dev/null || true"
+    # unlink the window from the scratch session. Target by window ID scoped to
+    # the scratch session so it is removed there regardless of renames/reindexes;
+    # silence errors if the window was already killed inside the popup.
+    tmux display-popup -E "tmux attach-session -t '$target_session'; tmux unlink-window -t '$target_session:$window_id' 2>/dev/null || true"
 }
 
 function new_session() {
